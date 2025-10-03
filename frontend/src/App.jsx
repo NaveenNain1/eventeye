@@ -18,6 +18,7 @@ import CreatePost from './pages/CreatePost';
 import CreatedPostView from './pages/CreatedPostView';
 import MyPosts from './pages/MyPosts';
 import Landing from './pages/Landing';
+import TemplateStudents from './pages/TemplateStudents';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -76,6 +77,7 @@ function App() {
 <Route path='posts' element={<MyPosts setPageTitle={setPageTitle} setShowBackArrow={setShowBackArrow}/>}/>
 <Route path='post/:id' element={<CreatedPostView setPageTitle={setPageTitle} setShowBackArrow={setShowBackArrow}/>}/>
    
+<Route path='templates/students/:templateId' element={<TemplateStudents setPageTitle={setPageTitle} setShowBackArrow={setShowBackArrow}/>}/>
     
    </Route>
       </Routes>

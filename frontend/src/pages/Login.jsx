@@ -35,7 +35,7 @@ const Login = ({ checkIfLoggedIn }) => {
     try {
       const response = await axiosClient.post('/send-otp', { mobile });
       setAskName(response.data.askName);
-       setOtp(response.data.otp.toString().split(''))
+      //  setOtp(response.data.otp.toString().split(''))
       setStep(2);
       // Focus first OTP input after a short delay
       setTimeout(() => {

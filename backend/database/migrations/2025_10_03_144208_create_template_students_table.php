@@ -1,0 +1,39 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('template_students', function (Blueprint $table) {
+            $table->id();
+            $table->string("name");
+            $table->string("certificate_number");
+            $table->string("email");
+            $table->string("mobile");
+            $table->string("remarks");
+            $table->integer('sent')->default(0);
+              $table->foreignId('user_template_id')
+                  ->constrained('user_templates')  
+                  ->onDelete('cascade');
+                    $table->foreignId('user_id')
+                  ->constrained('users') // references `id` on `users` table
+                  ->onDelete('cascade'); 
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('template_students');
+    }
+};

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\OtpAuthController;
 use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\TemplateStudentController;
 use App\Http\Controllers\Api\UserCreditController;
 use App\Http\Controllers\Api\UserTemplateController;
 use Illuminate\Http\Request;
@@ -47,7 +48,13 @@ Route::middleware('auth:user-api')->group(function () {
     Route::get('/user/credits/createOrder', [UserCreditController::class, 'createOrder']);
     Route::get('/user/credits/verifyPayment', [UserCreditController::class, 'verifyPayment']);
 
-    
+      Route::get('/user/students', [TemplateStudentController::class, 'index']);
+    Route::post('/user/students', [TemplateStudentController::class, 'store']);
+    Route::get('/user/students/{id}', [TemplateStudentController::class, 'show']);
+    Route::put('/user/students/{id}', [TemplateStudentController::class, 'update']);
+    Route::delete('/user/students/{id}', [TemplateStudentController::class, 'destroy']);
+    Route::post('/user/students/import/csv', [TemplateStudentController::class, 'importCsv'])->middleware('auth:sanctum');
+
 });
     Route::get('/test', [PostController::class, 'test']);
  

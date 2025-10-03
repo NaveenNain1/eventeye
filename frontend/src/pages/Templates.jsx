@@ -50,6 +50,8 @@ const Templates = ({ setPageTitle, setShowBackArrow }) => {
       case 'delete':
         handleDeleteTemplate(templateId);
         break;
+      case 'students':
+        navigate(`/user/templates/students/${templateId}`);
       default:
         break;
     }
@@ -236,10 +238,10 @@ const Templates = ({ setPageTitle, setShowBackArrow }) => {
                   Customize
                 </button>
                 <button
-                  onClick={() => handleTemplateAction('view', template.id)}
+                  onClick={() => handleTemplateAction('students', template.id)}
                   className="px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm"
                 >
-                  Preview
+                  Students
                 </button>
               </div>
             </div>
