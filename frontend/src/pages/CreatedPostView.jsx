@@ -511,9 +511,7 @@ const Copior = ({ text, title }) => {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                <FaMagic className="text-gray-400 text-2xl" />
-                              </div>
+                                <QRImage text={'https://premate.in/certify/'+id}  />
                             )}
                           </div>
                         )}
