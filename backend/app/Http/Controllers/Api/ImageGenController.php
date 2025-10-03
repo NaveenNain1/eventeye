@@ -35,9 +35,15 @@ class ImageGenController extends Controller
     //   exit();
 $apiKey = env('GEMINI_API_KEY');
 $model = "gemini-2.5-flash-image-preview";
-$prompt = "create a certificate formate for a hackathon, 
-Keep Student name, hackathon id, blank. Don't keep any place holder like, Student Name HERE. My system will autodetect that.
-User prompt: ".$request->prompt;
+$prompt = "Design a professional certificate for a hackathon in a clean and official format.  
+The certificate must include clearly visible spaces for:  
+1. Student Name (leave it blank, no placeholder text).  
+2. Hackathon ID (leave it blank, no placeholder text).  
+
+The design should look elegant, balanced, and suitable for an official hackathon award certificate.  
+Avoid using placeholder words like 'Name' or 'ID'.  
+User details: ".$request->prompt;
+
 
 // Gemini API endpoint
 $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
