@@ -82,7 +82,7 @@ const Login = ({ checkIfLoggedIn }) => {
       newOtp[i] = pasteData[i];
     }
     
-    setOtp(newOtp);
+    // setOtp(newOtp);
     
     // Focus the next empty input or the last input
     const nextIndex = Math.min(pasteData.length, 5);

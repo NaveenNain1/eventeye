@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\Api\ImageGenController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\OtpAuthController;
@@ -10,6 +12,7 @@ use Illuminate\Http\Request;
 Route::post('/send-otp', [OtpAuthController::class, 'sendOtp']);
 Route::post('/verify-otp', [OtpAuthController::class, 'verifyOtp']);
 Route::post('/login-wallet', [OtpAuthController::class, 'loginWallet']);
+Route::post('/generate-gen', [ImageGenController::class, 'generate']);
   
 
 

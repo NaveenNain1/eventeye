@@ -44,9 +44,27 @@ class OtpAuthController extends Controller
         ]);
 
         $otpCode = rand(100000, 999999);
-
+        
         Otp::where('mobile', $request->mobile)->delete(); // delete old OTPs
+  try {
+            $code = $otpCode;
+            $mobile = $request->mobile;
+$message="Dear user,
+Your verification code is $code
+it is valid for 5 minutes.
+InspireNet
 
+Webspool software";
+
+             $ch = curl_init('https://sms.bulksmslab.com/SMSApi/send?');
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, "userid=webspool&password=NavRSc7x&mobile=$mobile&msg=$message&senderid=WPLERP&msgType=text&dltEntityId=1501578870000012717&dltTemplateId=1407170937157618269&duplicatecheck=true&output=json&sendMethod=quick");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+  $data = curl_exec($ch);
+
+        } catch (\Exception $e) {
+            // Do nothing, continue even if OTP not sent
+        }
         Otp::create([
             'mobile' => $request->mobile,
             'otp' => $otpCode,
