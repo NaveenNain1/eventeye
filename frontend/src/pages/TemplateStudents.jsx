@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axiosClient from '../axios';
 import { useParams } from 'react-router-dom';
 import { Navigate,useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 function Modal({ open, onClose, children, title }) {
   if (!open) return null;
   return (
@@ -26,6 +27,22 @@ const TemplateStudents = ({ setPageTitle, setShowBackArrow }) => {
   const [csvMessage, setCsvMessage] = useState('');
   const fileInputRef = useRef();
 
+  const [sendingMail,setSendingMail] = useState(false);
+  
+  const send_mail = async()=>{
+    setSendingMail(true)
+    try{
+        await axiosClient.post('students/send_mail',{
+            user_template_id:templateId
+        })
+        toast.success("Mail sent successfully!");
+    }catch(error){
+toast.error(error)
+    }finally{
+    setSendingMail(false)
+
+    }
+  }
   // Modal state
   const [modals, setModals] = useState({
     create: false, edit: null, delete: null, import: false
@@ -255,7 +272,14 @@ const TemplateStudents = ({ setPageTitle, setShowBackArrow }) => {
                   </tr>
                 ))}
               </tbody>
+              <tfoot>
+                <tr>
+                    <td colspan="10" className='p-4 text-right'>  <button   onClick={()=>{send_mail()}}            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-5 py-2 rounded-lg shadow-lg text-lg font-semibold hover:scale-105 transition"
+>{sendingMail?'Sending':'Send Mail to All'}</button></td>
+                </tr>
+              </tfoot>
             </table>
+          
           )}
         </div>
 
