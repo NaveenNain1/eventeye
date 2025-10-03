@@ -21,6 +21,7 @@ import {
   FaCheck,
   FaSearch
 } from 'react-icons/fa';
+import QRImage from '../comps/QRImage';
 
 const CreatedPostView = ({ setPageTitle, setShowBackArrow }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -254,8 +255,8 @@ const [isSearching, setIsSearching] = useState(false);
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-3xl mb-6 shadow-2xl animate-pulse">
             <FaSpinner className="w-10 h-10 text-white animate-spin" />
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Loading Post</h3>
-          <p className="text-gray-600 animate-pulse">Preparing your masterpiece...</p>
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">Loading Certificate</h3>
+          <p className="text-gray-600 animate-pulse">Validating Certificate...</p>
         </div>
       </div>
     );
@@ -539,9 +540,10 @@ const Copior = ({ text, title }) => {
 
       {/* Desktop Layout */}
       {isDesktop && (
-        <div className="min-h-screen">
+        <div className="min-h-screen flex justify-center align-middle">
+        
           {/* Header */}
-          <div className="bg-white/95 backdrop-blur-lg border-b border-white/20 p-6 shadow-sm">
+          {/* <div className="bg-white/95 backdrop-blur-lg border-b border-white/20 p-6 shadow-sm">
             <div className="max-w-7xl mx-auto flex justify-between items-center">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 flex items-center mb-2">
@@ -574,20 +576,20 @@ const Copior = ({ text, title }) => {
                 </button>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Main Content */}
 <div className='flex justify-center py-10 px-4'>
     
-<div className="max-w-2xl mx-auto p-8">
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20">
+<div>
+            <div >
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 flex items-center">
                     <FaPalette className="text-purple-500 mr-3" />
-                    Final Design
+                    Your Certificate  
                   </h2>
-                  <p className="text-gray-600 mt-1">AI-enhanced template ready for use</p>
+                  {/* <p className="text-gray-600 mt-1">AI-enhanced template ready for use</p> */}
                 </div>
                 <div className="flex items-center space-x-6 text-sm text-gray-500">
                   <div className="flex items-center space-x-2">
@@ -650,7 +652,7 @@ const Copior = ({ text, title }) => {
                         )}
 
                         {element.type === 'image' && (
-                          <div className="w-full h-full  overflow-hidden shadow-lg">
+                          <div >
                             {element.aiImageUrl ? (
                               <img
                                 src={element.aiImageUrl}
@@ -658,15 +660,17 @@ const Copior = ({ text, title }) => {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                <div className="text-center">
+                              <div >
+                                {/* <div className="text-center">
                                   <FaMagic className="text-gray-400 text-3xl mx-auto mb-2" />
                                   <span className="text-gray-500 text-sm">AI Content</span>
-                                </div>
+                                </div> */}
+                                  <QRImage text='Nitish Here'  />
                               </div>
                             )}
                           </div>
                         )}
+                        
 
                         {/* NEW: Custom Image Rendering - NO BUTTONS, JUST DISPLAY */}
                         {element.type === 'custom-image' && (
@@ -681,9 +685,38 @@ const Copior = ({ text, title }) => {
                       </div>
                     ))}
                   </div>
+                  
                 )}
+                
               </div>
+              
             </div>
+            {/* Share */}
+            <br/>
+<div className="flex justify-center space-x-4">
+                {/* <button
+                  onClick={()=>setChangeImageModal(true)}
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 font-semibold flex items-center space-x-2"
+                >
+                  <FaMagic />
+                  <span>Change Image</span>
+                </button> */}
+                <button
+                  onClick={downloadTemplate}
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 font-semibold flex items-center space-x-2"
+                >
+                  <FaDownload />
+                  <span>Download</span>
+                </button>
+                <button
+                  onClick={() => setShowShareModal(true)}
+                  className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 font-semibold flex items-center space-x-2"
+                >
+                  <FaShare />
+                  <span>Share</span>
+                </button>
+              </div>
+            {/* Share end */}
           </div>
 
 
@@ -897,6 +930,7 @@ const Copior = ({ text, title }) => {
                   </div>
                 )}
               </div>
+
             </div>
 
             {/* Set Image Button */}
