@@ -192,7 +192,7 @@ const ThemeOutlet = ({pageTitle, showBackArrow = false, user}) => {
         
         {/* Top Bar */}
         {pageTitle && (
-          <header className="flex items-center justify-between h-16 px-4 md:px-6 bg-white/80 backdrop-blur-sm border-b border-white/20 shadow-sm" style={{ zIndex: 20 }}>
+          <header className="flex items-center justify-between h-16 px-4 md:px-6 bg-white/80 backdrop-blur-sm border-b border-white/20 shadow-sm" style={{ zIndex: 10 }}>
             <div className="flex items-center">
               {showBackArrow && (
                 <button 

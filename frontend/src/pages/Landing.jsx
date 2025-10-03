@@ -126,7 +126,7 @@ const Landing = () => {
       role: "Content Creator",
       company: "1.2M followers",
       image: "/api/placeholder/60/60",
-      quote: "PostCraftAI helped me grow from 100K to 1.2M followers in just 6 months. The content is always on-brand and engaging!",
+      quote: "EventEye AI helped me grow from 100K to 1.2M followers in just 6 months. The content is always on-brand and engaging!",
       rating: 5
     },
     {
@@ -134,7 +134,7 @@ const Landing = () => {
       role: "Marketing Director",
       company: "TechFlow Inc.",
       image: "/api/placeholder/60/60",
-      quote: "Our engagement rates increased by 340% after switching to PostCraftAI. The AI understands our brand voice perfectly.",
+      quote: "Our engagement rates increased by 340% after switching to EventEye AI. The AI understands our brand voice perfectly.",
       rating: 5
     },
     {
@@ -346,10 +346,10 @@ const Landing = () => {
             <button onClick={() => scrollToSection('hero')} className="flex items-center space-x-3">
               <div className={`w-10 h-10 ${instagramGradient} rounded-2xl p-0.5`}>
                 <div className="bg-white rounded-xl w-full h-full flex items-center justify-center">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 font-bold text-lg">P</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 font-bold text-lg">EE</span>
                 </div>
               </div>
-              <span className="text-2xl font-black text-gray-900">PostCraftAI</span>
+              <span className="text-2xl font-black text-gray-900">EventEye AI</span>
             </button>
 
             {/* Desktop Navigation */}
@@ -496,15 +496,15 @@ const Landing = () => {
           </div>
 
           <h1 className="text-5xl lg:text-7xl font-black text-gray-900 mb-8 leading-tight">
-            Create Viral Posts with
+            Create Bulk Certificates with
             <span className={`${instagramText} block`}>
               AI in 4 Simple Steps
             </span>
           </h1>
 
           <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-            From drag-and-drop templates to AI-generated content with images, titles, captions, and keywords. 
-            Create Instagram-ready posts in minutes, not hours.
+            From drag-and-drop templates to AI-generated content with QR Code, titles, Ranks etc.
+            Create share-ready certificates in minutes, not hours.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
@@ -927,7 +927,7 @@ const Landing = () => {
         <div className="max-w-4xl mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black text-gray-900 mb-6">Frequently Asked Questions</h2>
-            <p className="text-xl text-gray-600">Everything you need to know about PostCraftAI</p>
+            <p className="text-xl text-gray-600">Everything you need to know about EventEye AI</p>
           </div>
 
           <div className="space-y-4">
@@ -1006,7 +1006,7 @@ const Landing = () => {
                     <span className={`font-bold text-lg ${instagramText}`}>P</span>
                   </div>
                 </div>
-                <span className="text-2xl font-black text-gray-900">PostCraftAI</span>
+                <span className="text-2xl font-black text-gray-900">EventEye AI</span>
               </button>
               <p className="text-gray-600 mb-6 leading-relaxed">
                 The world's most advanced AI-powered content creation platform. Create viral Instagram posts in minutes, not hours.
@@ -1062,7 +1062,7 @@ const Landing = () => {
 
           <div className="border-t border-gray-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-600 text-sm mb-4 md:mb-0">
-              © 2025 PostCraftAI. All rights reserved.
+              © 2025 EventEye AI. All rights reserved.
             </div>
             <div className="flex space-x-6 text-sm text-gray-600">
               <button onClick={() => navigate('/login')} className="hover:text-gray-900 transition-colors">Privacy Policy</button>
