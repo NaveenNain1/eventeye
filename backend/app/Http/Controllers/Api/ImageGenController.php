@@ -8,15 +8,35 @@ use Illuminate\Http\Request;
 class ImageGenController extends Controller
 {
     //
+    function titleToFilename(string $title, string $extension = "txt"): string {
+    // Remove invalid characters (\/:*?"<>|)
+    $filename = preg_replace('/[\\/*?:\"<>|]/', '', $title);
+
+    // Replace spaces with underscores
+    $filename = str_replace(' ', '_', $filename);
+
+    // Trim and limit length (to avoid filesystem issues)
+    $filename = substr($filename, 0, 100);
+
+    return $filename . "." . $extension;
+}
     public function generate(Request $request){
         $request->validate([
             'prompt'=>'required|string|max:225'
         ]);
-      
+      $prompt = $request->prompt;
+    //   return 'image_caches/'.self::titleToFilename($prompt);
+      if(file_exists('image_caches/'.self::titleToFilename($prompt)) and $request->unique!=1){
+      $imageB64 = file_get_contents('image_caches/'.self::titleToFilename($prompt));
+        return response()->json([
+    'base64'=>$imageB64
+]); 
+      }
+    //   exit();
 $apiKey = env('GEMINI_API_KEY');
 $model = "gemini-2.5-flash-image-preview";
 $prompt = "create a certificate formate for a hackathon, 
-Keep Student name, hackathon id, blank
+Keep Student name, hackathon id, blank. Don't keep any place holder like, Student Name HERE. My system will autodetect that.
 User prompt: ".$request->prompt;
 
 // Gemini API endpoint
@@ -59,9 +79,15 @@ if (isset($response['candidates'][0]['content']['parts'])) {
         }
     }
 }
+if($imageB64!=""){
+     file_put_contents('image_caches/'.self::titleToFilename($request->prompt),$imageB64);
 return response()->json([
     'base64'=>$imageB64
 ]);
+}
+return response()->json([
+    'message'=>'Error generating image'
+],500);
 // <!DOCTYPE html>
 // <html lang="en">
 // <head>
