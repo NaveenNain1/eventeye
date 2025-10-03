@@ -123,7 +123,7 @@ const [isSearching, setIsSearching] = useState(false);
       });
 
       setIsGenerating(false);
-      toast.success('AI content generated successfully! ✨');
+      toast.success('Certificated loaded successfully! ✨');
       
       return {
         ...canvasData,
