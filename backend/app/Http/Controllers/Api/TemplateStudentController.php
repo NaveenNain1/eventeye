@@ -166,7 +166,44 @@ $content = str_replace('{{Remarks}}',$student->remarks,$content);
 
         $students = TemplateStudent::where('user_template_id', $request->user_template_id)
             ->get();
- 
+foreach($students as $data){
+
+$html = '
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Certificate Award</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin:0; padding:20px;">
+  <div style="max-width:600px; margin:0 auto; background:#ffffff; border-radius:8px; padding:30px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+    <h2 style="color:#4CAF50; text-align:center;">🎉 Congratulations!</h2>
+    <p style="font-size:16px; color:#333;">
+      Dear Participant,<br><br>
+      You have successfully received your <strong>certificate</strong> from <strong>Event Eye</strong>.
+    </p>
+    <p style="text-align:center; margin:30px 0;">
+      <a href="https://premate.in/certify'.$data->id.'" 
+         style="background:#4CAF50; color:#fff; text-decoration:none; padding:12px 24px; border-radius:5px; font-weight:bold;">
+         👉 Download Your Certificate
+      </a>
+    </p>
+    <p style="font-size:14px; color:#666; text-align:center;">
+      Thank you for participating. We wish you success ahead!<br><br>
+      <em>– Team Event Eye</em>
+    </p>
+  </div>
+</body>
+</html>
+';
+
+Mail::html($html, function ($message) use ($data) {
+    $message->to($data->email)
+            ->subject('Congratulations! You got a certificate from Event Eye')
+            ->from('me@example.com', 'Event Eye');
+});
+
+}
         return response()->json($students);
     }
 }
