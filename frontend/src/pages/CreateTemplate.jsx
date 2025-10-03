@@ -97,7 +97,7 @@ const CreateTemplate = ({setPageTitle, setShowBackArrow}) => {
             <div className="space-y-2">
               <label htmlFor="instagramName" className="flex items-center text-sm font-medium text-gray-700">
                 <div className="w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mr-2"></div>
-                Template Title / Instagram Page Name
+                Template Name:
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -109,11 +109,11 @@ const CreateTemplate = ({setPageTitle, setShowBackArrow}) => {
                   id="instagramName"
                   value={formData.instagramName}
                   onChange={handleInputChange}
-                  placeholder="yourbrand_official"
+                  placeholder="e.g. Hackmanthon"
                   className="w-full pl-10 pr-4 py-4 text-lg border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200"
                 />
               </div>
-              <p className="text-xs text-gray-500 ml-1">Enter your Instagram handle without the @ symbol. You can also enter title directly</p>
+              <p className="text-xs text-gray-500 ml-1">Enter name of any event or hackathon</p>
             </div>
 
             {/* Category Field */}

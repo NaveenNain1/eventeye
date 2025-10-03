@@ -162,7 +162,7 @@ const ThemeOutlet = ({pageTitle, showBackArrow = false, user}) => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-gray-900">PostCraft AI</h1>
+            <h1 className="text-xl font-bold text-gray-900">EventEye AI</h1>
           </div>
         </div>
         <nav className="flex-1 px-6 py-6 space-y-3">
@@ -192,7 +192,7 @@ const ThemeOutlet = ({pageTitle, showBackArrow = false, user}) => {
         
         {/* Top Bar */}
         {pageTitle && (
-          <header className="flex items-center justify-between h-16 px-4 md:px-6 bg-white/80 backdrop-blur-sm border-b border-white/20 shadow-sm" style={{ zIndex: 20 }}>
+          <header className="flex items-center justify-between h-16 px-4 md:px-6 bg-white/80 backdrop-blur-sm border-b border-white/20 shadow-sm" style={{ zIndex: 10 }}>
             <div className="flex items-center">
               {showBackArrow && (
                 <button 

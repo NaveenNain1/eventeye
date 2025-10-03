@@ -1,4 +1,10 @@
 export const CATEGORIES = [
+   {
+    name: 'Competition',
+    subcategories: [
+      
+    ]
+  },
   {
     name: 'News',
     subcategories: [

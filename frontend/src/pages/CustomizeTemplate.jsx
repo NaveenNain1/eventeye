@@ -15,9 +15,10 @@ import {
   FaPalette,
   FaLayerGroup,
   FaPlus,
-  FaTrash
+  FaTrash,
 } from 'react-icons/fa';
-
+import {ArrowLeftIcon, ArrowLeftRight, WandSparkles} from 'lucide-react'
+import TemplateModal from '../comps/TemplateModal';
 // Throttle utility function for performance optimization
 const throttle = (func, limit) => {
   let inThrottle;
@@ -46,6 +47,8 @@ const CustomizeTemplate = ({ setPageTitle, setShowBackArrow }) => {
   const [showProperties, setShowProperties] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   
+
+ 
   // NEW: Custom image upload states
   const [customImages, setCustomImages] = useState([]);
   const [selectedCustomImage, setSelectedCustomImage] = useState(null);
@@ -56,6 +59,90 @@ const CustomizeTemplate = ({ setPageTitle, setShowBackArrow }) => {
   const dragStateRef = useRef({ isDragging: false });
 
   const isDesktop = window.innerWidth >= 768;
+
+
+     const [aiTemplate, setAiTemplate] = useState(false);
+  const [ai_temp_img, set_ai_temp] = useState('https://plus.unsplash.com/premium_photo-1759432614458-1a85120c66d7?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+  const [ai_template_loading, set_ai_template_loading] = useState(false);
+
+  const [prompt,setPrompt]=useState('')
+  const Generate_with_AI = async()=>{
+set_ai_template_loading(true);
+setAiTemplate(true)
+
+    try {
+
+      // const token = localStorage.getItem('token');
+    const res = await axiosClient.post(`generate-gen`, {
+      prompt: prompt,
+    });
+      set_ai_temp('data:image/png;base64,'+res.data.base64)
+     
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to load APIs');
+    } finally {
+     set_ai_template_loading(false);
+    }
+  }
+  
+const OpenCustomize = async () => {
+  // Use the base64 image from ai_temp_img as a custom image and set as background
+  setIsUploading(true);
+  const img = new window.Image();
+  img.onload = () => {
+    // Keep max width/height 350px, but preserve aspect ratio
+    const maxSize = 500;
+    let width = img.width;
+    let height = img.height;
+    if (width > height) {
+      if (width > maxSize) {
+        height = Math.round((height / width) * maxSize);
+        width = maxSize;
+      }
+    } else {
+      if (height > maxSize) {
+        width = Math.round((width / height) * maxSize);
+        height = maxSize;
+      }
+    }
+
+    const newCustomImage = {
+      id: Date.now() + Math.random(),
+      src: ai_temp_img,
+      name: 'AI Generated Image',
+      width,
+      height
+    };
+    setCustomImages(prev => [...prev, newCustomImage]);
+    setBackgroundImage(ai_temp_img);
+    setCanvasSize({ width, height });
+    setIsUploading(false);
+    toast.success('AI image added as custom image and background! 🖼️');
+  };
+  img.src = ai_temp_img;
+};
+
+  const regenertateAI_Temp = async()=>{
+set_ai_template_loading(true);
+setAiTemplate(true)
+
+    try {
+
+      // const token = localStorage.getItem('token');
+    const res = await axiosClient.post(`generate-gen`, {
+      prompt: prompt,
+      unique:1
+    });
+      set_ai_temp('data:image/png;base64,'+res.data.base64)
+     
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to load APIs');
+    } finally {
+     set_ai_template_loading(false);
+    }
+  }
 
   useEffect(() => {
     setShowBackArrow(true);
@@ -106,6 +193,7 @@ const CustomizeTemplate = ({ setPageTitle, setShowBackArrow }) => {
     }
   };
 
+  
   // NEW: Custom image upload handler
   const handleCustomImageUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -685,9 +773,9 @@ const CustomizeTemplate = ({ setPageTitle, setShowBackArrow }) => {
               <div className="text-center max-w-2xl px-8 relative z-10">
                 {/* Main Upload Area */}
                 <div className="mb-12">
-                  <div className="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-full mb-8 shadow-2xl animate-pulse">
+                  {/* <div className="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-full mb-8 shadow-2xl animate-pulse">
                     <FaUpload className="text-white text-4xl" />
-                  </div>
+                  </div> */}
                   <h1 className="text-5xl font-bold text-gray-900 mb-6 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">
                     Create Your Template
                   </h1>
@@ -697,32 +785,131 @@ const CustomizeTemplate = ({ setPageTitle, setShowBackArrow }) => {
                 </div>
 
                 {/* Upload Zone */}
-                <div 
-                  onClick={() => fileInputRef.current?.click()}
-                  className="group border-4 border-dashed border-purple-300 rounded-3xl p-16 cursor-pointer hover:border-purple-500 hover:bg-gradient-to-br hover:from-purple-50 hover:via-pink-50 hover:to-orange-50 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl bg-white/60 backdrop-blur-sm"
-                >
-                  <div className="flex flex-col items-center">
-                    <div className="w-20 h-20 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-xl">
-                      <FaUpload className="text-white text-2xl" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3">Drop your image here</h3>
-                    <p className="text-gray-600 text-lg mb-4">or click to browse your files</p>
-                    <div className="flex items-center space-x-4 text-sm text-gray-500">
-                      <span className="flex items-center">
-                        <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                        PNG, JPG, WEBP
-                      </span>
-                      <span className="flex items-center">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                        Up to 10MB
-                      </span>
-                      <span className="flex items-center">
-                        <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
-                        High Quality
-                      </span>
-                    </div>
-                  </div>
-                </div>
+          <div className="space-y-8">
+  
+  {/* AI prompt box (full width) */}
+  <div className="group border-4 border-dashed border-purple-300 rounded-3xl p-8 md:p-16 bg-white/60 backdrop-blur-sm hover:border-purple-500 hover:bg-gradient-to-br hover:from-purple-50 hover:via-pink-50 hover:to-orange-50 transition-all duration-300 hover:shadow-2xl w-full">
+    <div className="flex flex-col items-stretch">
+      <div className="w-20 h-20 self-center bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-xl">
+        <WandSparkles className="text-white text-2xl" />
+      </div>
+      <h3 className="text-2xl font-bold text-gray-900 mb-3 text-center">AI: Generate certificate template</h3>
+      <p className="text-gray-600 text-lg mb-6 text-center">Describe the style, fields, and branding</p>
+
+      <div className="space-y-4">
+        <textarea
+          className="w-full min-h-[140px] rounded-2xl border border-purple-200 focus:border-purple-500 focus:ring-4 focus:ring-purple-200/60 outline-none p-4 text-gray-800 placeholder-gray-400 transition"
+          placeholder="e.g., Royal blue theme, gold accents, serif headings, include Recipient Name, Course Title, Date, Director Signature, QR code bottom-right"
+           value={prompt}
+           onChange={(e) => setPrompt(e.target.value)}
+        />
+        <div className="flex items-center justify-between">
+          {/* <div className="text-xs text-gray-500">
+            Tip: Mention colors, fonts, logos, margins, and elements like seals or QR codes.
+          </div> */}
+          <div 
+          style={{
+                display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    width: '100%'
+          }}
+          >
+            {/* <button
+              onClick={() => setPrompt('Minimal monochrome, large serif title, subtle border, center seal, QR bottom-right')}
+              className="px-3 py-2 text-sm rounded-xl border border-purple-200 text-purple-700 bg-white/70 hover:bg-purple-50 transition"
+            >
+              Suggest
+            </button> */}
+             
+            <button
+              onClick={Generate_with_AI}
+              // onClick={() => setAiTemplate(true)}
+
+              className="inline-flex self-center items-center gap-2 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white px-5 py-2.5 rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition"
+            >
+              <WandSparkles className="text-white" />
+              Magic Generate
+            </button>
+            
+          </div>
+        </div>
+      </div>
+
+      {/* Optional: quick chips */}
+      {/* <div className="mt-6 flex flex-wrap gap-2">
+        {[
+          'Royal Blue + Gold',
+          'Minimal Monochrome',
+          'Classic Serif',
+          'Modern Sans',
+          'With Seal Badge',
+          'QR + Signature',
+        ].map((chip) => (
+          <button
+            key={chip}
+            onClick={() => setPrompt((p) => (p ? p + ' | ' + chip : chip))}
+            className="text-sm px-3 py-1.5 rounded-full border border-purple-200 text-purple-700 bg-white/70 hover:bg-purple-50 transition"
+          >
+            {chip}
+          </button>
+        ))}
+      </div> */}
+    </div>
+  </div>
+
+  <div className="flex items-center my-8">
+    <div className="flex-grow h-px bg-gray-300" />
+    <span className="mx-4 text-gray-500 font-semibold text-lg">OR</span>
+    <div className="flex-grow h-px bg-gray-300" />
+  </div>
+  
+{/* Upload box (full width) */}
+  <div 
+    onClick={() => fileInputRef.current?.click()}
+    className="group border-4 border-dashed border-purple-300 rounded-3xl p-16 cursor-pointer hover:border-purple-500 hover:bg-gradient-to-br hover:from-purple-50 hover:via-pink-50 hover:to-orange-50 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl bg-white/60 backdrop-blur-sm w-full"
+  >
+    <div className="flex flex-col items-center">
+      <div className="w-20 h-20 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-xl">
+        <FaUpload className="text-white text-2xl" />
+      </div>
+      <h3 className="text-2xl font-bold text-gray-900 mb-3">Drop your image here</h3>
+      <p className="text-gray-600 text-lg mb-4">or click to browse your files</p>
+      <div className="flex items-center space-x-4 text-sm text-gray-500">
+        <span className="flex items-center">
+          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+          PNG, JPG, WEBP
+        </span>
+        <span className="flex items-center">
+          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+          Up to 10MB
+        </span>
+        <span className="flex items-center">
+          <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+          High Quality
+        </span>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
+
+
+ <TemplateModal
+        open={aiTemplate}
+        onClose={() => setAiTemplate(false)}
+        imgSrc={ai_temp_img}
+        onCustomize={() => {
+         OpenCustomize()
+           
+        }}
+        onRegenerate={()=>regenertateAI_Temp()}
+        loading={ai_template_loading}
+      />
+{/*  */}
+
               </div>
             </div>
           ) : (
@@ -813,7 +1000,7 @@ const CustomizeTemplate = ({ setPageTitle, setShowBackArrow }) => {
                           <FaImage className="text-white text-sm" />
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">AI Image</p>
+                          <p className="font-semibold text-gray-900">QR Code</p>
                           <p className="text-xs text-gray-600">Resizable placeholder</p>
                         </div>
                       </div>
@@ -883,6 +1070,38 @@ const CustomizeTemplate = ({ setPageTitle, setShowBackArrow }) => {
                       </div>
                     )}
                   </div>
+
+{/* Chota krne ka */}
+
+{/* <button  
+onClick={()=>{
+  console.log(canvasSize)
+}}
+>
+  Console
+</button> */}
+ <div className="p-4 bg-gradient-to-r from-purple-50 via-pink-50 to-orange-50 rounded-2xl border border-purple-100">
+            <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+              <ArrowLeftRight className="mr-2 text-purple-500" />
+             Canvas Width: {canvasSize.width}px
+            </label>
+            <input
+              type="range"
+              min="400"
+              max="700"
+              value={canvasSize.width}
+              // onChange={(e) => setCanvasSize(element.id, { fontSize: parseInt(e.target.value) })}
+              onChange={(e) => setCanvasSize({ width: parseInt(e.target.value) , height:parseInt(e.target.value)})}
+              className="w-full h-3 bg-gradient-to-r from-purple-200 to-pink-200 rounded-lg appearance-none cursor-pointer slider"
+            />
+            <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <span>400px</span>
+              <span>700px</span>
+            </div>
+          </div>
+
+
+                  {/*  */}
                 </div>
               </div>
 
@@ -1213,7 +1432,7 @@ const MobileCanvasElement = React.memo(({
           <div className="w-full h-full bg-gray-200 bg-opacity-90 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-400 backdrop-blur-sm">
             <div className="text-center">
               <FaImage className="text-gray-600 text-xl mx-auto mb-2" />
-              <span className="text-xs text-gray-600 block font-medium">AI Image</span>
+              <span className="text-xs text-gray-600 block font-medium">QR Code</span>
               <span className="text-xs text-gray-500 block">{element.width}×{element.height}</span>
             </div>
           </div>
@@ -1398,7 +1617,7 @@ const DesktopCanvasElement = React.memo(({
           <div className="w-full h-full bg-gray-200 bg-opacity-90 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-400 backdrop-blur-sm">
             <div className="text-center">
               <FaImage className="text-gray-600 text-xl mx-auto mb-2" />
-              <span className="text-xs text-gray-600 block font-medium">AI Image</span>
+              <span className="text-xs text-gray-600 block font-medium">QR Code</span>
               <span className="text-xs text-gray-500 block">{element.width}×{element.height}</span>
             </div>
           </div>
@@ -1681,6 +1900,9 @@ const PropertiesPanel = React.memo(({ element, updateElement }) => {
           Use the resize handle (bottom-right corner) for visual resizing, or input exact dimensions above for precision.
         </p>
       </div>
+
+
+
     </div>
   );
 });
