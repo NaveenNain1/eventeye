@@ -17,7 +17,7 @@ import {
   FaPlus,
   FaTrash,
 } from 'react-icons/fa';
-import {WandSparkles} from 'lucide-react'
+import {ArrowLeftIcon, ArrowLeftRight, WandSparkles} from 'lucide-react'
 import TemplateModal from '../comps/TemplateModal';
 // Throttle utility function for performance optimization
 const throttle = (func, limit) => {
@@ -92,7 +92,7 @@ const OpenCustomize = async () => {
   const img = new window.Image();
   img.onload = () => {
     // Keep max width/height 350px, but preserve aspect ratio
-    const maxSize = 700;
+    const maxSize = 500;
     let width = img.width;
     let height = img.height;
     if (width > height) {
@@ -1000,7 +1000,7 @@ setAiTemplate(true)
                           <FaImage className="text-white text-sm" />
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">AI Image</p>
+                          <p className="font-semibold text-gray-900">QR Code</p>
                           <p className="text-xs text-gray-600">Resizable placeholder</p>
                         </div>
                       </div>
@@ -1070,6 +1070,38 @@ setAiTemplate(true)
                       </div>
                     )}
                   </div>
+
+{/* Chota krne ka */}
+
+{/* <button  
+onClick={()=>{
+  console.log(canvasSize)
+}}
+>
+  Console
+</button> */}
+ <div className="p-4 bg-gradient-to-r from-purple-50 via-pink-50 to-orange-50 rounded-2xl border border-purple-100">
+            <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+              <ArrowLeftRight className="mr-2 text-purple-500" />
+             Canvas Width: {canvasSize.width}px
+            </label>
+            <input
+              type="range"
+              min="400"
+              max="700"
+              value={canvasSize.width}
+              // onChange={(e) => setCanvasSize(element.id, { fontSize: parseInt(e.target.value) })}
+              onChange={(e) => setCanvasSize({ width: parseInt(e.target.value) , height:parseInt(e.target.value)})}
+              className="w-full h-3 bg-gradient-to-r from-purple-200 to-pink-200 rounded-lg appearance-none cursor-pointer slider"
+            />
+            <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <span>400px</span>
+              <span>700px</span>
+            </div>
+          </div>
+
+
+                  {/*  */}
                 </div>
               </div>
 
@@ -1400,7 +1432,7 @@ const MobileCanvasElement = React.memo(({
           <div className="w-full h-full bg-gray-200 bg-opacity-90 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-400 backdrop-blur-sm">
             <div className="text-center">
               <FaImage className="text-gray-600 text-xl mx-auto mb-2" />
-              <span className="text-xs text-gray-600 block font-medium">AI Image</span>
+              <span className="text-xs text-gray-600 block font-medium">QR Code</span>
               <span className="text-xs text-gray-500 block">{element.width}×{element.height}</span>
             </div>
           </div>
@@ -1585,7 +1617,7 @@ const DesktopCanvasElement = React.memo(({
           <div className="w-full h-full bg-gray-200 bg-opacity-90 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-400 backdrop-blur-sm">
             <div className="text-center">
               <FaImage className="text-gray-600 text-xl mx-auto mb-2" />
-              <span className="text-xs text-gray-600 block font-medium">AI Image</span>
+              <span className="text-xs text-gray-600 block font-medium">QR Code</span>
               <span className="text-xs text-gray-500 block">{element.width}×{element.height}</span>
             </div>
           </div>
