@@ -173,7 +173,7 @@ const TemplateStudents = ({ setPageTitle, setShowBackArrow }) => {
 
   // Main UI
   return (
-    <div className="min-h-full py-8 flex flex-col items-center bg-gradient-to-b from-white to-orange-50">
+    <div className="min-h-full py-3 flex flex-col items-center ">
       <div className="w-full max-w-4xl bg-white rounded-xl shadow-lg p-6">
 
         {/* Header */}

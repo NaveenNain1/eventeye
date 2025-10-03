@@ -55,6 +55,8 @@ Route::middleware('auth:user-api')->group(function () {
     Route::delete('/user/students/{id}', [TemplateStudentController::class, 'destroy']);
     Route::post('/user/students/import/csv', [TemplateStudentController::class, 'importCsv'])->middleware('auth:sanctum');
 
+    Route::post('/user/students/corrent_spelling', [TemplateStudentController::class, 'store']);
+
 });
     Route::get('/test', [PostController::class, 'test']);
  
