@@ -390,15 +390,15 @@ const Copior = ({ text, title }) => {
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-lg font-bold text-gray-900 flex items-center">
                 <FaEye className="text-purple-500 mr-2" />
-                Preview
+                Certificate
               </h1>
-              <button
+              {/* <button
                 onClick={() => navigate(`/user/templates/customize/${aiContent.user_template_id}`)}
                 className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
               >
                 <FaEdit className="inline mr-2" />
                 Edit Template
-              </button>
+              </button> */}
             </div>
             
             {/* Action Buttons */}
@@ -419,20 +419,20 @@ const Copior = ({ text, title }) => {
               </button>
             </div>
              <div className="flex space-x-3 mt-5">
-              <button
+              {/* <button
                 onClick={()=>setChangeImageModal(true)}
                 className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl font-semibold flex items-center justify-center space-x-2 hover:shadow-lg transition-all"
               >
                 <FaMagic />
                 <span>Change Image</span>
-              </button>
-              <button
+              </button> */}
+              {/* <button
                 onClick={() => setShowShareModal(true)}
                 className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-xl font-semibold flex items-center justify-center space-x-2 hover:shadow-lg transition-all"
               >
                 <FaShare />
                 <span>Share</span>
-              </button>
+              </button> */}
             </div>
           </div>
  
@@ -665,7 +665,7 @@ const Copior = ({ text, title }) => {
                                   <FaMagic className="text-gray-400 text-3xl mx-auto mb-2" />
                                   <span className="text-gray-500 text-sm">AI Content</span>
                                 </div> */}
-                                  <QRImage text={'https://inspirenet.indiacoders.in/certify/'+id}  />
+                                  <QRImage text={'https://premate.in/certify/'+id}  />
                               </div>
                             )}
                           </div>
