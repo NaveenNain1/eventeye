@@ -63,20 +63,20 @@ const [isSearching, setIsSearching] = useState(false);
     setIsLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axiosClient.get(`user/template/post-generated/${id}`, {
+      const res = await axiosClient.get(`students/certidata/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      setAIContent(res.data.post);
-      setTemplate(res.data.data);
-      console.log("aiContent", res.data.post);
-      console.log("aiContent", aiContent);
+      setAIContent(demoAIContent);
+      setTemplate(res.data.content);
+      // console.log("aiContent", res.data.post);
+      // console.log("aiContent", aiContent);
 
-      if (res.data.data.canvas) {
-        const canvasData = JSON.parse(res.data.data.canvas);
-        const processedData = await processTemplateWithAI(canvasData, res.data.post);
+      if (res.data.content) {
+        const canvasData = JSON.parse(res.data.content);
+        const processedData = await processTemplateWithAI(canvasData, demoAIContent);
         setPreviewData(processedData);
       }
     } catch (error) {
@@ -434,39 +434,7 @@ const Copior = ({ text, title }) => {
               </button>
             </div>
           </div>
-<div className="max-w-5xl mx-auto p-1 mt-2">
-<div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-                    <FaPalette className="text-purple-500 mr-3" />
-                    Details
-                  </h2>
-                  <p className="text-gray-600 mt-1">Direct Copy and Paste</p>
-                </div>
-                <div className="flex items-center space-x-6 text-sm text-gray-500">
-                
-                </div>
-              </div>
-                            <div className="  justify-center">
-                                {aiContent?.aititle && (
-                                    <>
-<CopiorMobile text={aiContent.aititle} title="AI title"/>
-<br/>
-<CopiorMobile text={aiContent.caption} title="Caption"/>
-<br/>
-
-<CopiorMobile text={
-  parseKeywords(JSON.parse(aiContent.keywords)).slice(0, 3).join(', ')
-} title="Keywords"/>
-<br/>
-</>
-)
-}
-
- </div>
-              </div>
-</div>
+ 
           {/* Template Preview */}
           <div className="p-1 mt-4">
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/20">
@@ -610,39 +578,7 @@ const Copior = ({ text, title }) => {
 
           {/* Main Content */}
 <div className='flex justify-center py-10 px-4'>
-    <div className="max-w-5xl mx-auto p-8">
-<div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-                    <FaPalette className="text-purple-500 mr-3" />
-                    Details
-                  </h2>
-                  <p className="text-gray-600 mt-1">Direct Copy and Paste</p>
-                </div>
-                <div className="flex items-center space-x-6 text-sm text-gray-500">
-                
-                </div>
-              </div>
-                            <div className="  justify-center">
-                                {aiContent?.aititle && (
-                                    <>
-<Copior text={aiContent.aititle} title="AI title"/>
-<br/>
-<Copior text={aiContent.caption} title="Caption"/>
-<br/>
-
-<Copior text={
-  parseKeywords(JSON.parse(aiContent.keywords)).slice(0, 3).join(', ')
-} title="Keywords"/>
-<br/>
-</>
-)
-}
-
- </div>
-              </div>
-</div>
+    
 <div className="max-w-2xl mx-auto p-8">
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20">
               <div className="flex items-center justify-between mb-8">
