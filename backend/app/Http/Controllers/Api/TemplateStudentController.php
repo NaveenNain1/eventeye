@@ -7,6 +7,7 @@ use App\Models\TemplateStudent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Support\Facades\Mail;
 
 class TemplateStudentController extends Controller
 {
@@ -64,6 +65,25 @@ class TemplateStudentController extends Controller
             ->firstOrFail();
 
         return response()->json($student);
+    }
+
+
+        public function get_certi($id,Request $request)
+    {
+        $student = TemplateStudent::where('id', $id)
+            ->firstOrFail();
+$content=  file_get_contents('templates/'.$student->user_template_id.'/template.json');
+if($content == ""){
+    return response()->json([
+        'message'=>'Certificate not customized!'
+    ]);
+}
+$content = str_replace('{{Student Name}}',$student->name,$content);
+$content = str_replace('{{Certificate ID}}',$student->certificate_number,$content);
+$content = str_replace('{{Remarks}}',$student->remarks,$content);
+        return response()->json([
+            'content'=>$content
+        ]);
     }
 
     /**
@@ -136,5 +156,17 @@ class TemplateStudentController extends Controller
         return response()->json([
             'message' => "CSV imported successfully. {$count} students added.",
         ]);
+    }
+
+    public function send_mail(Request $request)
+    {
+        $request->validate([
+            'user_template_id' => 'required|exists:user_templates,id',
+        ]);
+
+        $students = TemplateStudent::where('user_template_id', $request->user_template_id)
+            ->get();
+ 
+        return response()->json($students);
     }
 }

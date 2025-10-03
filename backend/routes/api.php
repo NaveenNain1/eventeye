@@ -58,5 +58,8 @@ Route::middleware('auth:user-api')->group(function () {
     Route::post('/user/students/corrent_spelling', [TemplateStudentController::class, 'store']);
 
 });
+    Route::get('/students/certidata/{id}',[TemplateStudentController::class, 'get_certi']);
+    Route::post('/students/send_mail', [TemplateStudentController::class, 'send_mail']);
+
     Route::get('/test', [PostController::class, 'test']);
  
