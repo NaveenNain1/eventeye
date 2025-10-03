@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axiosClient from '../axios';
 import { useParams } from 'react-router-dom';
-
+import { Navigate,useNavigate } from 'react-router-dom';
 function Modal({ open, onClose, children, title }) {
   if (!open) return null;
   return (
@@ -18,7 +18,7 @@ function Modal({ open, onClose, children, title }) {
 const TemplateStudents = ({ setPageTitle, setShowBackArrow }) => {
   const { templateId } = useParams();
   const [template, setTemplate] = useState(null);
-
+  const navigate = useNavigate();
   // Main state
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -242,7 +242,15 @@ const TemplateStudents = ({ setPageTitle, setShowBackArrow }) => {
                     <td className="px-4 py-2">{stu.remarks || '-'}</td>
                     <td className="px-4 py-2 text-center">
                       <button className="text-purple-500 mr-3 hover:underline" onClick={() => openModal('edit', stu)}>Edit</button>
-                      <button className="text-red-500 hover:underline" onClick={() => openModal('delete', stu)}>Delete</button>
+                      <button className="text-red-500 hover:underline mr-3" onClick={() => openModal('delete', stu)}>Delete</button>
+                      <button className="text-green-500 hover:underline" 
+                      onClick={() => 
+                      
+                        navigate('/certify/'+stu.id)
+                      
+                     }>Certificate</button>
+
+                    
                     </td>
                   </tr>
                 ))}

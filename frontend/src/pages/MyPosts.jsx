@@ -1,384 +1,286 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import toast, { Toaster } from 'react-hot-toast';
-import axiosClient from '../axios';
-import { 
-  FaDownload,
-  FaEdit,
-  FaEye,
-  FaSpinner,
-  FaImage,
-  FaCalendarAlt,
-  FaPalette,
-  FaLayerGroup,
-  FaPlus,
-  FaRobot,
-  FaHashtag
-} from 'react-icons/fa';
+import { FaPlus, FaEye, FaEdit, FaTrash, FaHeart } from 'react-icons/fa';
+import axios from '../axios';
 
-// Move utility functions outside component to prevent recreation
-const parseKeywords = (keywordsString) => {
-  try {
-    return JSON.parse(keywordsString || '[]');
-  } catch {
-    return [];
-  }
-};
-
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-};
-
-const getPostThumbnail = (post) => {
-  if (post.image_path) {
-    return post.image_path + '&w=200&h=200&fit=crop';
-  }
-  
-  try {
-    if (post.template?.canvas) {
-      const canvasData = JSON.parse(post.template.canvas);
-      if (canvasData.backgroundImage) {
-        return canvasData.backgroundImage;
-      }
-    }
-  } catch (error) {
-    console.error('Error parsing canvas data:', error);
-  }
-  
-  return `https://via.placeholder.com/400x400/6366f1/ffffff?text=${encodeURIComponent(post.aititle || post.title || 'Post')}`;
-};
-
-// Memoized Post Card Component
-const PostCard = React.memo(({ post, onDownload, onView, onEdit, isDownloading }) => {
-  const parsedKeywords = useMemo(() => parseKeywords(post.keywords), [post.keywords]);
-  const formattedDate = useMemo(() => formatDate(post.created_at), [post.created_at]);
-  const thumbnail = useMemo(() => getPostThumbnail(post), [post.image_path, post.template?.canvas, post.aititle, post.title]);
-
-  return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 overflow-hidden group hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] flex flex-col">
-      {/* Post Thumbnail */}
-      <div className="relative aspect-square overflow-hidden">
-        <img
-          src={thumbnail}
-          alt={post.aititle || post.title}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-          loading="lazy"
-          onError={(e) => {
-            e.target.src = 'https://via.placeholder.com/400x400/6366f1/ffffff?text=No+Preview';
-          }}
-        />
-        
-        {/* AI Badge */}
-        {post.aititle && (
-          <div className="absolute top-3 left-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center space-x-1 shadow-lg">
-            <FaRobot />
-            <span>AI Enhanced</span>
-          </div>
-        )}
-        
-        {/* Overlay Actions */}
-        <div className="absolute inset-0 bg-black/50 bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-          <div className="flex space-x-3">
-            <button
-              onClick={() => onView(post.id)}
-              className="bg-white text-gray-900 p-3 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110"
-              title="Preview Post"
-            >
-              <FaEye />
-            </button>
-            
-            <button
-              onClick={() => onEdit(post.user_template_id)}
-              className="bg-purple-500 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110"
-              title="Edit Post"
-            >
-              <FaEdit />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Post Info */}
-      <div className="p-6 flex flex-col flex-1">
-        {/* Title Section */}
-        <div className="mb-3 min-h-[3.5rem]">
-          {post.aititle && (
-            <h3 className="text-lg font-bold text-gray-900 mb-1 line-clamp-2 leading-tight">
-              {post.aititle}
-            </h3>
-          )}
-          
-          <h4 className={`text-gray-600 line-clamp-1 leading-tight ${post.aititle ? 'text-sm' : 'text-lg font-bold text-gray-900'}`}>
-            {post.aititle ? `Original: ${post.title}` : post.title}
-          </h4>
-        </div>
-        
-        {/* Summary */}
-        <div className="mb-3 min-h-[2.5rem]">
-          {post.summary && (
-            <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
-              {post.summary}
-            </p>
-          )}
-        </div>
-        
-        {/* Keywords */}
-        <div className="mb-3 min-h-[2rem]">
-          {parsedKeywords.length > 0 && (
-            <div className="flex flex-wrap gap-1">
-              {parsedKeywords.slice(0, 3).map((keyword, index) => (
-                <span key={index} className="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
-                  <FaHashtag className="mr-1 text-xs" />
-                  {keyword}
-                </span>
-              ))}
-              {parsedKeywords.length > 3 && (
-                <span className="text-xs text-gray-500">+{parsedKeywords.length - 3} more</span>
-              )}
-            </div>
-          )}
-        </div>
-        
-        {/* Meta Info */}
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center text-sm text-gray-600">
-            <FaPalette className="text-purple-500 mr-2" />
-            <span className="truncate">{post.template?.name || 'Unknown Template'}</span>
-          </div>
-          
-          <div className="flex items-center text-sm text-gray-600">
-            <FaCalendarAlt className="text-pink-500 mr-2" />
-            <span>{formattedDate}</span>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex space-x-2 mt-auto">
-          <button
-            onClick={() => onView(post.id)}
-            disabled={isDownloading}
-            className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl font-semibold text-sm shadow-md hover:shadow-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2 h-12"
-          >
-            {isDownloading ? (
-              <>
-                <FaSpinner className="animate-spin" />
-                <span>Processing...</span>
-              </>
-            ) : (
-              <>
-                <FaDownload />
-                <span>Download</span>
-              </>
-            )}
-          </button>
-          
-          <button
-            onClick={() => onView(post.id)}
-            className="flex-1 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white py-3 px-4 rounded-xl font-semibold text-sm shadow-md hover:shadow-lg transition-all transform hover:scale-105 flex items-center justify-center space-x-2 h-12"
-          >
-            <FaEye />
-            <span>View</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-});
-
-PostCard.displayName = 'PostCard';
-
-const MyPosts = ({ setPageTitle, setShowBackArrow }) => {
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [downloadingIds, setDownloadingIds] = useState(new Set());
+const Templates = ({ setPageTitle, setShowBackArrow }) => {
   const navigate = useNavigate();
-  
-  // Cache desktop check
-  const isDesktop = useMemo(() => window.innerWidth >= 768, []);
+  const [templates, setTemplates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
+    setPageTitle("Certificates");
     setShowBackArrow(false);
-    setPageTitle("My Posts");
-    fetchPosts();
-  }, [setShowBackArrow, setPageTitle]);
+    fetchTemplates();
+  }, [setPageTitle, setShowBackArrow]);
 
-  const fetchPosts = useCallback(async () => {
-    setIsLoading(true);
+  const fetchTemplates = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axiosClient.get('/user/posts/all-posts', {
+      setLoading(true);
+      const response = await axios.get('/user/template', {
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
       
-      const sortedPosts = (res.data.posts || []).sort((a, b) => {
-        const dateA = new Date(a.created_at);
-        const dateB = new Date(b.created_at);
-        return dateB - dateA;
-      });
-      
-      setPosts(sortedPosts);
-      if (sortedPosts.length > 0) {
-        // toast.success(`Found ${sortedPosts.length} posts! 🎨`);
+      setTemplates(response.data.data || []);
+      setError('');
+    } catch (err) {
+      console.error('Error fetching templates:', err);
+      setError('Failed to load templates. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateNew = () => {
+    navigate('/user/create-template');
+  };
+
+  const handleTemplateAction = (action, templateId) => {
+    switch(action) {
+      case 'view':
+        navigate(`/user/templates/view/${templateId}`);
+        break;
+      case 'edit':
+        navigate(`/user/templates/customize/${templateId}`);
+        break;
+      case 'delete':
+        handleDeleteTemplate(templateId);
+        break;
+      case 'students':
+        navigate(`/user/templates/students/${templateId}`);
+      default:
+        break;
+    }
+  };
+
+  const handleDeleteTemplate = async (templateId) => {
+    if (window.confirm('Are you sure you want to delete this template?')) {
+      try {
+        await axios.delete(`/user/template/${templateId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        
+        // Remove template from state
+        setTemplates(prev => prev.filter(template => template.id !== templateId));
+      } catch (err) {
+        console.error('Error deleting template:', err);
+        setError('Failed to delete template. Please try again.');
       }
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-      toast.error('Failed to load posts');
-      setPosts([]);
-    } finally {
-      setIsLoading(false);
     }
-  }, []);
+  };
 
-  // Optimized download function (simplified and moved to callback)
-  const handleDownload = useCallback(async (post) => {
-    if (downloadingIds.has(post.id)) return;
+  const formatRelativeDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
-    setDownloadingIds(prev => new Set([...prev, post.id]));
-    
-    try {
-      // Simplified download logic - you can implement the full canvas logic here
-      // For now, just redirect to view page
-      navigate(`/user/post/${post.id}`);
-      
-      toast.success('Redirected to post view! 📥');
-    } catch (error) {
-      console.error('Download error:', error);
-      toast.error('Failed to process post');
-    } finally {
-      setDownloadingIds(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(post.id);
-        return newSet;
-      });
-    }
-  }, [downloadingIds, navigate]);
+    if (diffDays === 1) return 'Today';
+    if (diffDays === 2) return 'Yesterday';
+    if (diffDays <= 7) return `${diffDays - 1} days ago`;
+    if (diffDays <= 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
+    if (diffDays <= 365) return `${Math.ceil(diffDays / 30)} months ago`;
+    return `${Math.ceil(diffDays / 365)} years ago`;
+  };
 
-  const handleView = useCallback((postId) => {
-    navigate(`/user/post/${postId}`);
-  }, [navigate]);
-
-  const handleEdit = useCallback((templateId) => {
-    navigate(`/user/templates/customize/${templateId}`);
-  }, [navigate]);
-
-  const handleCreateNew = useCallback(() => {
-    navigate('/user/create-post');
-  }, [navigate]);
-
-  // Memoize posts count
-  const postsCount = useMemo(() => posts.length, [posts.length]);
-
-  if (isLoading) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+      <div className="min-h-full flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-3xl mb-6 shadow-2xl animate-pulse">
-            <FaSpinner className="w-10 h-10 text-white animate-spin" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-2xl mb-4">
+            <svg className="w-8 h-8 text-white animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Loading Your Posts</h3>
-          <p className="text-gray-600 animate-pulse">Fetching your creative masterpieces...</p>
+          <p className="text-gray-600 text-lg">Loading your templates...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
-      <Toaster
-        position="top-center"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: '#fff',
-            color: '#333',
-            borderRadius: '12px',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-            border: '1px solid rgba(255,255,255,0.2)',
-          },
-          success: {
-            iconTheme: {
-              primary: '#10B981',
-              secondary: '#fff',
-            },
-          },
-          error: {
-            iconTheme: {
-              primary: '#EF4444',
-              secondary: '#fff',
-            },
-          },
-        }}
-      />
-
-      <div className="p-4 md:p-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg mr-4">
-                <FaLayerGroup className="text-white text-xl" />
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">My Posts</h1>
-                <p className="text-gray-600">{postsCount} AI-enhanced posts</p>
-              </div>
-            </div>
-            
-            <button
-              onClick={handleCreateNew}
-              className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white px-4 md:px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 font-semibold flex items-center space-x-2"
-            >
-              <FaPlus />
-              <span className="hidden md:inline">Create New Post</span>
-              <span className="md:hidden">New</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Posts Grid */}
-        {postsCount === 0 ? (
-          <div className="text-center py-16">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-3xl mb-6">
-              <FaImage className="text-gray-400 text-3xl" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">No Posts Yet</h3>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              Start creating amazing social media posts with our AI-powered templates!
-            </p>
-            <button
-              onClick={handleCreateNew}
-              className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 font-bold text-lg flex items-center space-x-3 mx-auto"
-            >
-              <FaPlus />
-              <span>Create Your First Post</span>
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                onDownload={handleDownload}
-                onView={handleView}
-                onEdit={handleEdit}
-                isDownloading={downloadingIds.has(post.id)}
-              />
-            ))}
-          </div>
+    <div className="min-h-full">
+      {/* Header Section */}
+      {templates.length !=0 && (
+    <>
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-3">My Certificates</h1>
+        <p className="text-gray-600 text-lg">Generated Certificates</p>
+        {templates.length > 0 && (
+          <p className="text-sm text-gray-500 mt-2">{templates.length} template{templates.length !== 1 ? 's' : ''} created</p>
         )}
       </div>
+ 
+      {/* Error Message */}
+      { error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+          <div className="flex">
+            <svg className="w-5 h-5 text-red-400 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
+        </div>
+      )}
+
+    
+ 
+      {/* Templates Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {/* Create New Template Card */}
+        {/* <div 
+          onClick={handleCreateNew}
+          className="group cursor-pointer bg-white rounded-3xl shadow-lg hover:shadow-xl border-2 border-dashed border-gray-200 hover:border-purple-300 transition-all duration-300 transform hover:scale-[1.02] p-8 flex flex-col items-center justify-center min-h-[300px]"
+        >
+          <div className="w-20 h-20 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+            <FaPlus className="text-white text-2xl" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Create New</h3>
+          <p className="text-gray-500 text-center text-sm">Design a new template for your Instagram posts</p>
+        </div> */}
+
+         {templates.map((template) => (
+          <div key={template.id} className="group bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] overflow-hidden">
+             {/* <div className=" relative aspect-square bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 overflow-hidden">
+              <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                {template.canvas ? (
+                   <div className="text-center p-4">
+                    <svg className="w-16 h-16 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p className="text-xs text-gray-500">Canvas Ready</p>
+                  </div>
+                ) : (
+                  <div className="text-center p-4">
+                    <svg className="w-16 h-16 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    <p className="text-xs text-gray-500">Template Draft</p>
+                  </div>
+                )}
+              </div>
+             
+              <div className="absolute inset-0 bg-black/500 bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleTemplateAction('view', template.id);
+                    }}
+                    className="p-3 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors"
+                    title="Preview Template"
+                  >
+                    <FaEye className="text-gray-700" />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleTemplateAction('edit', template.id);
+                    }}
+                    className="p-3 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors"
+                    title="Edit Template"
+                  >
+                    <FaEdit className="text-gray-700" />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleTemplateAction('delete', template.id);
+                    }}
+                    className="p-3 bg-white rounded-full shadow-lg hover:bg-red-50 transition-colors"
+                    title="Delete Template"
+                  >
+                    <FaTrash className="text-red-500" />
+                  </button>
+                </div>
+              </div>
+            </div> */}
+
+            {/* Template Info */}
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-3">
+                <h3 className="text-lg font-semibold text-gray-900 truncate" title={template.name}>
+                  {template.name}
+                </h3>
+                <span className="text-xs text-gray-500">ID: {template.id}</span>
+              </div>
+              
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex space-x-2">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-purple-100 via-pink-100 to-orange-100 text-purple-800">
+                    {template.category}
+                  </span>
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                    {template.language}
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-xs text-gray-500 mb-4">
+                Last updated: {formatRelativeDate(template.updated_at)}
+              </div>
+
+              <div className="flex space-x-2">
+                <button
+                  //onClick={() => handleTemplateAction('edit', template.id)}
+                   onClick={() => handleTemplateAction('students', template.id)}
+
+                  className="flex-1 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white font-medium py-2 px-4 rounded-lg hover:shadow-lg transition-all duration-200 text-sm"
+                >
+                  Send Certificates
+                </button>
+                {/* <button
+                  onClick={() => handleTemplateAction('students', template.id)}
+                  className="px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                >
+                  Students
+                </button> */}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+   </>
+)}
+      {/* Empty State */}
+      {templates.length === 0 && !loading && !error && (
+        <div className="text-center py-16">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-100 via-pink-100 to-orange-100 rounded-full mb-6">
+            <svg className="w-10 h-10 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">No templates yet</h3>
+          <p className="text-gray-500 mb-6">Create your first template to get started with AI-powered Instagram posts</p>
+          <button
+            onClick={handleCreateNew}
+            className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+          >
+            Create Your First Template
+          </button>
+        </div>
+      )}
+
+      {/* Refresh Button */}
+      {templates.length > 0 && (
+        <div className="text-center mt-8">
+          <button
+            onClick={fetchTemplates}
+            disabled={loading}
+            className="text-gray-500 hover:text-gray-700 transition-colors text-sm font-medium"
+          >
+            {loading ? 'Refreshing...' : 'Refresh Templates'}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
-export default React.memo(MyPosts);
+export default Templates;
