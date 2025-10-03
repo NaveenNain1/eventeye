@@ -63,7 +63,7 @@ function App() {
     <Router>
       
       <Routes>
-        <Route path="/" element={<> <Landing isLoggedIn={isLoggedIn} user={user} checkIfLoggedIn={checkIfLoggedIn} /></>} />
+        <Route path="/" element={<> <Login isLoggedIn={isLoggedIn} user={user} checkIfLoggedIn={checkIfLoggedIn} /></>} />
         <Route path="login" element={<> <Login isLoggedIn={isLoggedIn} user={user} checkIfLoggedIn={checkIfLoggedIn} /></>} />
         <Route path="certify/:id" element={<> <CreatedPostView  setPageTitle={setPageTitle} setShowBackArrow={setShowBackArrow} isLoggedIn={isLoggedIn} user={user} checkIfLoggedIn={checkIfLoggedIn} /></>} />
    <Route path='user' element={<ProtectedRoute isLoggedIn={isLoggedIn} isLoginChecking={isLoginChecking} ><ThemeOutlet user={user} pageTitle={pageTitle} showBackArrow={showBackArrow} /></ProtectedRoute>}>

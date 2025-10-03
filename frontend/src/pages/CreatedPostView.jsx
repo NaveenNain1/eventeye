@@ -665,7 +665,7 @@ const Copior = ({ text, title }) => {
                                   <FaMagic className="text-gray-400 text-3xl mx-auto mb-2" />
                                   <span className="text-gray-500 text-sm">AI Content</span>
                                 </div> */}
-                                  <QRImage text='Nitish Here'  />
+                                  <QRImage text={'https://inspirenet.indiacoders.in/certify/'+id}  />
                               </div>
                             )}
                           </div>
