@@ -26,7 +26,7 @@ const ThemeOutlet = ({pageTitle, showBackArrow = false, user}) => {
   const menuItems = [
     { name: 'Templates', path: '/user/templates', icon: <FaThLarge size={20} /> },
     // { name: 'Create Post', path: '/user/create-post', icon: <FaPlusSquare size={20} /> },
-        { name: 'My Posts', path: '/user/posts', icon: <FaPlusSquare size={20} /> },
+        { name: 'Gennerate Certificates', path: '/user/posts', icon: <FaPlusSquare size={20} /> },
 
     { name: 'Credits', path: '/user/credits', icon: <FaCreditCard size={20} /> },
     { name: 'Buy Credits', path: '/user/buy-credits', icon: <FaShoppingCart size={20} /> },

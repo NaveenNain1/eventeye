@@ -978,31 +978,7 @@ setAiTemplate(true)
                           </div>
                         </div>
                       </div>
-                      {/*Remarks Aayegi */}
-
-<div
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, 'title', {
-                          text: '{{Remarks}}',
-                          fontSize: 21,
-                          fontFamily: 'Arial',
-                          fontWeight: 'bold',
-                          color: '#000000',
-                          width: 250,
-                          height: 50,
-                        })}
-                        className="group p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border-2 border-purple-200 cursor-grab hover:border-purple-400 hover:shadow-lg transition-all active:cursor-grabbing select-none transform hover:scale-[1.02]"
-                      >
-                        <div className="flex items-center">
-                          <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform shadow-md">
-                            <FaFont className="text-white text-sm" />
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-900">Remarks</p>
-                            <p className="text-xs text-gray-600">Will Come from Backend</p>
-                          </div>
-                        </div>
-                      </div>
+                     
                        {/* Certificate Id Aayegi */}
 
 <div
@@ -1024,6 +1000,31 @@ setAiTemplate(true)
                           </div>
                           <div>
                             <p className="font-semibold text-gray-900">Certificata ID</p>
+                            <p className="text-xs text-gray-600">Will Come from Backend</p>
+                          </div>
+                        </div>
+                      </div>
+                       {/*Remarks Aayegi */}
+
+<div
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, 'title', {
+                          text: '{{Remarks}}',
+                          fontSize: 21,
+                          fontFamily: 'Arial',
+                          fontWeight: 'bold',
+                          color: '#000000',
+                          width: 250,
+                          height: 50,
+                        })}
+                        className="group p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border-2 border-purple-200 cursor-grab hover:border-purple-400 hover:shadow-lg transition-all active:cursor-grabbing select-none transform hover:scale-[1.02]"
+                      >
+                        <div className="flex items-center">
+                          <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform shadow-md">
+                            <FaFont className="text-white text-sm" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900">Remarks</p>
                             <p className="text-xs text-gray-600">Will Come from Backend</p>
                           </div>
                         </div>
